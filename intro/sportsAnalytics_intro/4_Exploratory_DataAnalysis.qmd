@@ -1,0 +1,217 @@
+---
+title: "Exploratory Data Analysis"
+author: "kbr1218"
+format: html
+editor: visual
+---
+
+```{r, setup, include=FALSE}
+library(tidyverse)
+library(Lahman)
+
+team <- Teams %>% 
+  filter(yearID >= 2000, yearID != 2020)
+
+```
+
+# Exploratory Data Analysis:
+
+EDA: Visualize and transform data to systematically explore
+
+1.  Generate Questions
+
+2.  Search for Answers
+
+    1.  Visualize
+
+    2.  Transform
+
+    3.  Model
+
+3.  Use results to generate new questions
+
+**KEY: All about asking GOOD questions -\> direct you to a part of your data**
+
+Standard questions to start
+
+1.  Question 1: What is the variation in my variables?
+
+2.  Question 2: How are variables related? (co-variation)
+
+# Tendency
+
+#### Mean: average value
+
+$$
+\rm mean = \bar{x} = 
+\frac{\displaystyle\sum\limits_{i=1}^{N}x_{i}}{N}
+$$
+
+i -\> individual observation
+
+N -\> total number of observations
+
+Can be affected by outliers
+
+-   Trimmed mean: Drops values at each end, eliminate influence of outlier
+
+-   Weighted mean: weight observation differently
+
+#### Median: Middle number in sorted list
+
+Robust to outliers
+
+```{r, median, warning=FALSE, message=FALSE}
+
+
+# Create Slug%
+
+team %>% 
+  summarise_if(is.numeric, list(mean = mean, median = median))
+```
+
+# Variability
+
+variability: Dispersion of data values
+
+### Measure: Deviations from central tendency
+
+-   Deviation(편차)
+
+-   standard deviation(표준 편차)
+
+#### Variance: Average squared deviation (in squared units)
+
+$$
+\rm variance = \sigma^2 = \frac{\displaystyle\sum\limits_{i=1}^{N}
+\left(x_{i}-\bar{x}
+\right)^2}{N}
+$$
+
+#### Standard Deviation: square root of variance
+
+#### Percentile : Pth percentile is value such that, at least P% of values take that value or less.
+
+```{r, variation, message=FALSE, warning=FALSE}
+
+```
+
+### Visualize
+
+ggplot(data = df) +
+
+-   %\>% ggplot에서는 +
+
+-   tidyverse 안에 ggplot이 있음
+
+geom\_\<function\>(aes(\<mapping\>))
+
+#### Boxplot: Median and Quartiles
+
+```{r, boxplot, warning=FALSE, message=FALSE}
+
+ggplot(data = team) + 
+  geom_boxplot(aes(y = HR)) +           # 박스 모양의 플롯
+  theme_bw()
+```
+
+#### Histogram: Count number of observations within a range
+
+```{r, histogram, warning=FALSE, message=FALSE}
+
+ggplot(data = team) + 
+  geom_histogram(aes(x = HR), bins = 100) + 
+  # bin이 많을 수록 x축의 range를 세분화시킴
+  theme_light()
+```
+
+#### Density
+
+```{r, density, warning=FALSE, message=FALSE}
+ggplot(data = team) +
+  geom_density(aes(x = HR)) + 
+  theme_bw()
+
+# histogram과 density를 같은 그래프에 넣기
+ggplot(data = team, aes(x = HR)) + 
+  geom_histogram(aes(y = ..density..)) +
+  geom_density(col = "red") + 
+  theme_bw()
+```
+
+# Relation
+
+how are variables related (closely positive or negative)
+
+### Measure
+
+#### Correlation: Measure between -1 and 1.
+
+왜 우리는 카운팅보다 비율(레이팅)을 더 선호할까?
+
+$$
+\rm correlation = r = \frac{\displaystyle\sum\limits_{i=1}^{N}
+\left(x_{i}-\bar{x}\right)\left(y_{i}-\bar{y}\right)}
+{\left(N-1\right)\sigma_x\sigma_y}
+$$
+
+$$
+-1\leq r \leq 1
+$$
+
+```{r, relation, message=false, warning=FALSE}
+
+
+cor(team$HR, team$R)
+cor(team$SB, team$R)
+cor(team$ERA, team$W)
+
+```
+
+### Visualize
+
+#### Scatterplot
+
+```{r, scatterplot, warning=FALSE, message=FALSE}
+team <- team %>% 
+  mutate(
+    WPct = W/G
+  )
+  
+ggplot(data = team) +
+  geom_point(aes(x = HR, y = R,
+                 col = WSWin,
+                 size = WPct),
+             alpha = 0.4) +
+  theme_bw()
+```
+
+#### Corrplot
+
+```{r, corrplot, warning=FALSE, message=FALSE}
+library(corrplot)
+
+
+corr_vars <- team %>% 
+  select(HR, R, SO, ERA, W)
+
+corr_matrix <- round(cor(corr_vars), digits = 2)
+
+corrplot(corr_matrix, method = "number")
+```
+
+# Exercises
+
+Use FanGraphs or Baseball Savant to build a data set and:
+
+<https://baseballsavant.mlb.com/>
+
+-   -\> leaderboard -\> csv 파일 다운받고 rename
+
+1.  Explore an individual pitching metric, analyze a visualization you created, and use that visualization to generate an interesting question.
+
+2.  Explore an individual hitting metric, analyze a visualization you created, and use that visualization to generate an interesting question.
+
+3.  Explore a team pitching metric, analyze a visualization you created, and use that visualization to generate an interesting question.
+
+4.  Explore a team hitting metric, analyze a visualization you created, and use that visualization to generate an interesting question.
