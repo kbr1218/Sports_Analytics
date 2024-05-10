@@ -1,0 +1,282 @@
+---
+title: "Baseball Metrics"
+author: "kbr1218"
+format: html
+editor: visual
+---
+
+# Basics (Phase 1)
+
+#### Batting Average (BA): Hits per at bat
+
+$$
+BA=\frac{H}{AB}
+$$
+
+Issues: Good plate appearance outcomes, that don't count
+
+-   Plate appearance outcomes:
+
+    1.  Hit (single, double, triple, home run)
+
+    2.  **Walk** (3 strike // 4 balls) -\> Not in AB
+
+    3.  Generic Out (K, Ground out, fly out)
+
+    4.  Sacrifice Bunt -\> Not in AB
+
+    5.  Sacrifice Fly -\> Not in AB
+
+    6.  Hit by pitch -\> Not in AB
+
+    7.  Fielders Choice
+
+    8.  Reach on Error
+
+    9.  Dropped 3rd Strike
+
+    10. Defensive Interference -\> Not in AB
+
+        -\> 이 10개 중 **(1, 3, 7, 8, 9)**만 bat으로 count됨
+
+-   Worse: Not all hits are equal (not all contact is equal)
+
+    -   ex\> single과 home run 모두를 batting average는 1번이라고 생각함 (둘 사이에는 큰 차이가 있음에도 불구하고)
+
+#### Run Batted In (RBI) : Result of a plate appearance is a run being scored (not if because of error or double play)
+
+|          | PA  | RBI | PA ROB | %PA ROB | PA RISP | %PA RISP | BA w/ ROB |
+|----------|-----|-----|--------|---------|---------|----------|-----------|
+| Player A | 636 | 101 | 315    | 49.5    | 195     | 30.7     | .247      |
+| Player B | 608 | 79  | 231    | 38      | 130     | 21.4     | .325      |
+
+Issue: Product of opportunity (B의 BA가 더 높지만, A가 기회가 더 많아서 높은 RBI를 가지고 있음)
+
+-\> Count metric (커런시의 수를 세는 것) versus a rate metric (비율)
+
+-\> RBI / PA ROB를 해서 비교하면 player B가 더 높음
+
+-\> RBI / %PA ROB를 해서 비교하면 player B가 더 높음
+
+-\> B가 더 좋은 선수
+
+#### Error (E): Official scorer judgement if player fails to convert an out on a play an average fielder should have make. Also, poor play that allows runner to advance
+
+[Error Example](https://baseballsavant.mlb.com/sporty-videos?playId=1f7d22d8-b80a-4281-bb73-a78f88489253)
+
+[Hit Example](https://baseballsavant.mlb.com/sporty-videos?playId=0cca465e-5311-4710-84dd-f879c2f80cd4)
+
+Issue: subjective and doesn't account for range doesn't factor mental mistakes
+
+-   만약 내가 잘 받는게 아니라 내가 위치를 잘 정하는 거라면
+
+-   error가 많을 수록 Fielder가 적어짐 -\> 이걸 배경으로 돈을 받는데 객관적이지 않음 subjective함
+
+**Pitcher Win (W): Look up on MLB.com**
+
+Issue: Don't have to pitch effectively to get a win, can be subjective, can reward ineffective pitcher, depends on offense and defense
+
+#### Save (SV): **Look up on MLB.com**
+
+Issue: Don't have to be effective, not necessarily most important situation
+
+# Better Metrics (Phase 2)
+
+**What makes a good metric?**
+
+1.  Measure contribution to success
+
+2.  Repeatable (signal)
+
+    noise랑 구분됨 (noise는 랜덤으로 나타나는 것)
+
+#### On-Base Percentage (OBP): How frequently hitter reaches base (doesn't make an out) $$
+OBP=\frac{H+BB+HBP}{AB+BB+HBP+SF}
+$$
+
+1.  Strength: More complete measure of a hitter's contribution to success, outcome -\> skill
+
+2.  Weakness: Weights all ways of getting on base the same, on base due to error doesn't count (hit hard and fast)
+
+#### Slugging Percentage (SLG): Average bases per at bat
+
+$$
+SLG=\frac{1\times1B+2\times2B+3\times3B+4\times HR}{AB}
+$$
+
+1.  Strength: Values extra base hits more heavily, "power" rate metric
+
+2.  Weakness: leaves out a lot of place appearances (walks), "weights" are not necessarily accurate measure of production
+
+#### On-Base Plus Slugging (OPS): Ability to get on base and hit for power
+
+$$
+OPS = OBP + SLG
+$$
+
+1.  Strength: most correlated to runs
+
+2.  Weakness: add different denominators (not interpret-able), doesn't account for hitting environment
+
+```{r, Create Metrics, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(Lahman)
+library(tidyverse)
+library(kableExtra)
+library(patchwork)
+
+team <- Teams
+batting <- Batting
+players <- People %>% 
+  mutate(
+    Name = paste(nameFirst, nameLast, sep = " ")
+  )
+
+# Create BA, OBP, SLG, OPS for team and individual
+team_2000 <-team_2000 %>% 
+  mutate(
+    X1B = H - X2B - X3B - HR, 
+    BA = round(H/AB, digits = 3), 
+    PA = AB + BB + HBP + SF, 
+    OBP = round((H + BB + HBP)/PA, digits = 3), 
+    SLG = round((1 * X1B + 2 * X2B + 3 * X3B + 4 * HR)/AB, digits = 3), 
+    OPS = OBP + SLG
+  )
+
+# Team Level
+team_2000 %>% 
+  select(franchID, yearID, OBP, SLG, BA) %>% 
+  arrange(-OBP) %>% 
+  head(10) %>% 
+  kable(booktabs = T) %>%                # making table with kable
+  kable_styling(bootstrap_option = c('striped'))
+
+
+# Player Level
+
+
+# OPS Leaderboard
+
+
+# Percentile
+
+```
+
+##### Relate to Success
+
+What wins games? Score more runs than opponent. For offense objective is to score runs. Measure success must see how events lead to runs.
+
+// offensive event -\> runs -\> wins
+
+```{r, success, message=FALSE, warning=FALSE}
+
+team_2000 %>% 
+  summarise (
+    r_BA = cor(BA, R), 
+    r_OBP = cor(OBP, R),     # 높은 OBP을 가지고 있는 팀이 점수를 더 많이 얻음
+    r_SLG = cor(SLG, R),     # 높은 SLG을 가지고 있는 팀이 점수를 더 많이 얻음
+    r_OPS = cor(OPS, R)      # 이 중에서 correlation이 가장 높음
+  ) %>% 
+  kable(booktabs = T) %>% 
+  kable_styling()
+
+# 팀마다 각각의 BA/OBP/SLG/OPS가 R(득점)과 얼마나 연관이 되어있는지 시각화
+
+p1 <- ggplot(data = team_2000, aes(x = BA, y = R)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  theme_bw()
+
+p2 <- ggplot(data = team_2000, aes(x = OBP, y = R)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  theme_bw()
+
+p3 <- ggplot(data = team_2000, aes(x = SLG, y = R)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  theme_bw()
+
+p4 <- ggplot(data = team_2000, aes(x = OPS, y = R)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  theme_bw()
+
+
+(p1|p2)/(p3|p4) # 2x2로 그래프 삽입
+```
+
+##### Repeatable
+
+Year-to-year consistency? Signal or noise. Pay for signal, not for noise.
+
+```{r, repeatable, message=FALSE, warning=FALSE}
+bat_2000 <- batting %>%         # 팀 단위가 아닌 개인 선수 기준으로 분석
+  filter(yearID >= 2000, yearID != 2022) %>% 
+  group_by(playerID, yearID) %>% 
+  summarise_if(is.numeric, sum) %>% 
+  filter(AB > 100)
+
+bat_2000 <- bat_2000 %>%       # season stat
+  mutate(
+    X1B = H - X2B - X3B - HR, 
+    BA = round(H/AB, digits = 3), 
+    PA = AB + BB + HBP + SF, 
+    OBP = round((H + BB + HBP)/PA, digits = 3), 
+    SLG = round((1 * X1B + 2 * X2B + 3 * X3B + 4 * HR)/AB, digits = 3), 
+    OPS = OBP + SLG
+  )
+
+bat_2000 <- bat_2000 %>% 
+  group_by(playerID) %>% 
+  arrange(yearID) %>% 
+  mutate(
+    BA_lag = lag(BA),            # 2002라면 2001 데이터를 줌 (없으면 NA)
+    OBP_lag = lag(OBP),
+    SLG_lag = lag(SLG), 
+    OPS_lag = lag(OPS)
+  ) %>% 
+  ungroup()     # ungroup하지 않으면 플레이어 단위로 correlation을 찾으려고 할거임
+
+# 이것들이 correlated되어있는지 확인
+bat_2000 %>% 
+  summarise(
+    BA_rept = cor(BA, BA_lag, use = "complete.obs"),
+    # BA는 별로 반복적이지 않음 (운이 따라야 하는 경우가 있기 때문)
+    OBP_rept = cor(OBP, OBP_lag, use = "complete.obs"), 
+    SLG_rept = cor(SLG, SLG_lag, use = "complete.obs"), 
+    OPS_rept = cor(OPS, OPS_lag, use = "complete.obs")
+  ) %>% 
+  kable(booktabs = T) %>% 
+  kable_styling()
+
+ggplot(data = bat_2000, aes(x = BA_lag, y = BA)) + 
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0, col = "red", linetype = "dashed") +    # 붉은 선은 45도
+  theme_bw()
+
+```
+
+# Exercises
+
+1.  Use a correlation metric and show graphically whether the following metrics are repeatable year-to-year. Use pitchers with 30 innings pitched or more (IP = IPouts/3). Note: we're going to use rate metrics instead of count.
+
+    1.  RBI per Plate Appearance
+
+    2.  Win per Pitching Appearance
+
+    3.  Earned run average (ERA)
+
+    4.  Walk and Hits Per Inning Pitched (WHIP)
+
+2.  Use a correlation metric and show graphically which of the following pitching stats is most related to the measure of success Runs Allowed. Note: This depends on the defense so it's not perfect!
+
+    1.  Win per Pitching Appearance
+
+    2.  Earned run average (ERA)
+
+    3.  Walk and Hits Per Inning Pitched (WHIP)
+
+    4.  Strikeouts (K) per Inning Pitched (IP)
+
+    5.  Walks (BB) per Inning Pitched
