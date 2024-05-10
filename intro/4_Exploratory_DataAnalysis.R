@@ -98,7 +98,7 @@ corrplot(corr_matrix, method = "number")
 library(ggplot2)
 
 # 1. Explore an individual pitching metric, analyze a visualization you created, and use that visualization to generate an interesting question.
-data_1 <- read.csv("IndividualPitching_2021.csv")
+data_1 <- read.csv("baseballData/IndividualPitching_2021.csv")
 
 ggplot(data = data_1) + 
   geom_point(aes(x = avg_hit_speed, y = gb),
@@ -111,7 +111,7 @@ ggplot(data = data_1) +
 
 
 # 2. Explore an individual hitting metric, analyze a visualization you created, and use that visualization to generate an interesting question.
-data_2 <- read.csv("IndividualHitting_2021.csv")
+data_2 <- read.csv("baseballData/IndividualHitting_2021.csv")
 
 plot_2 <- ggplot(data = data_2) +
   geom_point(aes(x = avg_hit_speed, y = avg_distance), 
@@ -126,7 +126,7 @@ plot_2
 
 # 3. Explore a team pitching metric, analyze a visualization you created, and use that visualization to generate an interesting question.
 
-data_3 <- read.csv("TeamPitching_2021.csv")
+data_3 <- read.csv("baseballData/TeamPitching_2021.csv")
 gb_for_bar = (data_3$gb)
 
 
@@ -141,7 +141,7 @@ ggplot(data = data_3, aes(x = team, y = gb_for_bar)) +
 
 # 4. Explore a team hitting metric, analyze a visualization you created, and use that visualization to generate an interesting question.
 
-data_4 <- read.csv("TeamHitting_2021.csv")
+data_4 <- read.csv("baseballData/TeamHitting_2021.csv")
 
 cor(data_4$avg_hit_speed, data_4$avg_distance)
 cor(data_4$avg_distance, data_4$ev95percent)
