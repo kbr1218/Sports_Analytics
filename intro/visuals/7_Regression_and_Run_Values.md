@@ -42,7 +42,7 @@ Interpret $\hat{\beta}_1$: slope -\> change in y due to a one unit change is x
 Our Model
 
 $$
-W\%=\beta_0+\beta_1RD+\epsilon
+W\\% \= \beta_0+\beta_1RD+\epsilon
 $$
 
 (RD: Run Differential, epsilon: error)
