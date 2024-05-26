@@ -1,0 +1,191 @@
+# 7_Regression_and_Run_Values
+title: "Regression and Run Values"  
+author: "kbr1218"  
+format: html  
+editor: visual  
+
+<br>
+<br>
+
+# Run Values
+
+At the heart of the best metrics.
+
+Convert event of game into a single value. Why? So we can compare
+
+Team objective: Win
+
+How: Score more runs than opponent
+
+<br>
+
+### Regression:
+
+Line of best fit
+
+beta0은 y축과 만나는 곳(intersection), beta1은 기울기(slope)
+
+$$
+y=\beta_0+\beta_1x+\epsilon
+$$
+
+Minimize sum of squared error to estimate $\hat{\beta}_0$ and $\hat{\beta}_1$
+
+이 직선은 모든 데이터로와 직선 사이의 거리가 최소인 곳에 위치함
+
+Interpret $\hat{\beta}_1$: slope -\> change in y due to a one unit change is x
+
+<br>
+
+#### Run Differential
+
+Our Model
+
+$$
+W\\% \= \beta_0+\beta_1RD+\epsilon
+$$
+
+(RD: Run Differential, epsilon: error)
+
+For our RD model, interpret $\hat{\beta}_1$ as follows: For each additional run in RD(run differential), we expect win percentage to increase by 0.0006.
+
+```{r, setup, include=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(Lahman)
+library(kableExtra)
+library(ggrepel)
+library(broom)
+
+team <- Teams
+```
+
+```{r, Run Differential, warning=FALSE, message=FALSE}
+
+# Make RD #
+team <- team %>% 
+  mutate(
+    W_pct = W/G,             # W% = (Wins) / (Games)
+    RD = R - RA,              # RD = (Runs Scored) - (Runs Allowed)
+    X1B = H - X2B - X3B - HR
+  )
+
+team_00 <- team %>% 
+  filter(yearID >= 2000, yearID != 2000)
+
+# Visualization
+ggplot(data = team_00, aes(x = RD, y = W_pct)) + 
+  geom_point() +
+  geom_smooth(method = "lm") +    # 직선 추가 (lm: linear model)
+  xlab("Run Differential") +
+  ylab("Win Percentage") +
+  theme_bw()  #강한 양수 그래프가 나옴
+
+# Linear Model #
+rd_model <- lm(W_pct ~ RD, data = team_00)
+
+tidy(rd_model) %>%                # beta0 = 0.5, beta1 = 0.0006
+  kable(booktabs = T) %>% 
+  kable_styling()
+
+
+# Find Residuals #
+
+
+```
+
+<br>
+
+How many runs equal a win (on average)?
+
+(1 Win) / (162 Games) = 0.006 (W%)
+
+-\> (0.0006) \* (10 Runs) = 0.006
+
+-\> 한 번 이기는 데 약 10 Runs이 필요함
+
+-\> 이 사람은 다른 방법을 사용함
+
+<br>
+
+#### Pythagorean Theorem
+
+Developed by Bill James
+
+$$
+W\%=\frac{R^\alpha}{R^\alpha + RA^\alpha}
+$$
+
+```{r, pythagroean theorem, message=FALSE, warning=FALSE}
+
+
+```
+
+<br>
+
+#### Linear Weights
+
+Find the marginal contribution (measured in runs) of batting events
+
+$$
+R=\beta_0+\beta_1BB+\beta_2HBP+\beta_31B+\beta_42B+\beta_53B+\beta_6HR+\beta_7SB+\beta_8CS+\epsilon 
+$$
+
+$\beta$ are the Run values
+
+```{r, linear weights, message=FALSE, include=FALSE}
+lin_weights <- lm(R ~ BB + HBP + X1B + X2B + X3B + HR + SB + CS,
+                  data = team_00)
+
+tidy(lin_weights) %>% 
+  kable(bookends = T) %>% 
+  kable_styling()
+
+```
+
+<br>
+
+#### Run Values in Context (Tom Tango)
+
+Context Matters (Intentional Walk not the same as unintentional)
+
+Base/out state: 24 combinations
+
+-   Context for which plays unfold in an inning
+
+-   transition from state-to-state
+
+Run Expectancy:
+
+Use transition from state-to-state to find the expected runs added/lost from transition
+
+Run Values:
+
+| 1B  | 2B  | 3B  | 0 outs | 1 out | 2 outs |
+|-----|-----|-----|--------|-------|--------|
+| \-  | \-  | \-  | 0.555  | 0.297 | 0.117  |
+| 1B  | \-  | \-  | 0.953  | 0.573 | 0.251  |
+| \-  | 2B  | \-  | 1.189  | 0.725 | 0.344  |
+| \-  | \-  | 3B  | 1.482  | 0.983 | 0.387  |
+| 1B  | 2B  | \-  | 1.573  | 0.971 | 0.466  |
+| 1B  | \-  | 3B  | 1.904  | 1.243 | 0.538  |
+| \-  | 2B  | 3B  | 2.054  | 1.467 | 0.634  |
+| 1B  | 2B  | 3B  | 2.417  | 1.650 | 0.815  |
+
+## Exercises
+
+1.  Estimate $\alpha$ for the Pythagorean Theorem.
+
+2.  Use the $\alpha$ you estimated to plot expected win/loss versus actual win/loss and add a 45 degree line. Label teams that had the biggest discrepancy between predicted and actual win/loss ratios. Why might they have over/under achieved?
+
+3.  Converting linear weight run values (lwRV) to wOBA weights. Note that the wOBA weights are relative to an out and scaled so it equals league average OBP.
+
+    1.  Run a Linear Weights regression for the year 2019
+
+    2.  Make the lwRV relative to an out by adding 0.3 to each value. Note, an out is worth -0.3 runs.
+
+    3.  Use the value from 2 to calculate raw wOBA for the entire league and OBP. You will have to sum all the team's data for the season before calculating league raw wOBA and OBP.
+
+    4.  Find the wOBA scale by dividing OBP by wOBA.
+
+    5.  The final wOBA weights are $wOBA\_scale\times(lwRV+0.3)$
