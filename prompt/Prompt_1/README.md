@@ -1,4 +1,5 @@
-# Prompt 1 : "더 나은 측정법(better metric)" 개발하기
+# Prompt 1
+### 스포츠를 선택하고 그 스포츠에 대한 "더 나은 측정법(better metric)" 개발하기
 
 - **Sports**: Baseball
 - **Stakeholder**: General Manager of the baseball team
