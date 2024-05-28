@@ -1,6 +1,5 @@
-# Prompt 1
+# Prompt 1 : "더 나은 측정법(better metric)" 개발하기
 
-스포츠를 선택하고, 그 스포츠에서 "더 나은 측정법(better metric)" 개발하기
 - **Sports**: Baseball
 - **Stakeholder**: General Manager of the baseball team
 - **Needs**: 타율, 장타율, 출루율, OPS 등 전통적인 통계를 넘어 GM이 선수의 공격 생산을 평가하는 데 도움이 될 수 있는 지표
