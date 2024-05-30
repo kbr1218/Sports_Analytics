@@ -51,8 +51,6 @@ tidy(rd_model) %>%
   kable_styling()
 
 
-##### 2. Run Value of Events #####
-
 # 회귀모델을 가지고 예측값과 잔차를 계산하여 df에 추가
 bat_team <- bat_team %>% 
   mutate(
@@ -88,7 +86,10 @@ p2 +
                   col = "blue")
 
 
-## Run Values
+
+
+
+##### 2. Run Value of Events #####
 # 변수들(bb, hbp, x1b, 2xb, 3xb, hr, sb, cs)이 득점(R)에 미치는 영향을
 # 분석하기 위해 회귀분석 수행
 lin_weights <- lm(r ~ bb + hbp + X1b + X2b + X3b + hr + sb + cs, 
@@ -98,8 +99,12 @@ tidy(lin_weights) %>%
   kable(bookends = T) %>% 
   kable_styling()
 
+
+
+
+
+##### 3. wOBA(가중 출루율)계산 #####
 ## Create wOBA
-# wOBA(가중 출루율)계산
 bat_team <- bat_team %>% 
   mutate(
     wOBA = round(((0.69 * bb) + (0.72 * hbp) + (0.88 * X1b) + (1.25 * X2b) + (1.5 * X3b) + (2.03 * hr)) / (ab + bb + hbp + sf), digits = 3),
@@ -127,7 +132,55 @@ bat_team_year %>%
   kable_styling()
 
 
-# 3. Stolen Base Analysis (도루분석)
+
+
+
+
+##### 4. ARC와 MLB #####
+library(Lahman)
+team <- Teams
+
+# Make RD #
+# MLB 데이터에서 RD와 W_pct 사이의 관계 시각화
+team_mlb <- team %>% 
+  filter(yearID >= 2002, yearID <= 2022) %>% 
+  mutate(
+    W_pct = W/G,             # W% = (Wins) / (Games)
+    RD = R - RA,              # RD = (Runs Scored) - (Runs Allowed)
+    X1B = H - X2B - X3B - HR
+  )
+
+# Visualization
+ggplot(data = team_mlb, aes(x = RD, y = W_pct)) + 
+  geom_point() +
+  geom_smooth(method = "lm") +                # 직선 추가 (lm: linear model)
+  xlab("Run Differential") +
+  ylab("Win Percentage") +
+  theme_bw()  #강한 양수 그래프가 나옴
+
+# Linear Model #
+# 회귀분석
+rd_model_mlb <- lm(W_pct ~ RD, data = team_mlb)
+
+tidy(rd_model_mlb) %>%                # beta0 = 0.5, beta1 = 0.0006
+  kable(booktabs = T) %>% 
+  kable_styling()
+
+
+# MLB 데이터에서 각 변수들이 득점에 미치는 영향 분석
+lin_weights_mlb <- lm(R ~ BB + HBP + X1B + X2B + X3B + HR + SB + CS,
+                      data = team_mlb)
+
+tidy(lin_weights_mlb) %>% 
+  kable(bookends = T) %>% 
+  kable_styling()
+
+
+
+
+
+
+##### 5. Stolen Base Analysis (도루분석) #####
 bat_team$att <- as.integer(bat_team$att)
 bat_team$sb <- as.integer(bat_team$sb)
 
@@ -158,7 +211,11 @@ tidy(rd_model) %>%
 
 
 
-# 4. Calculate Metrics (wOBA, wRAA (weighted runs above average), wRC (weighted runs created)
+
+
+##### 6. Calculate Metrics #####
+
+# wOBA, wRAA (weighted runs above average), wRC (weighted runs created)
 # and wRC_100 (weighted runs created per game 100 at-bats))
 # 타자의 성과를 평가하기 위한 wOBA, wRAA, wRC, wRC_100과 같은 고급 야구 통계 계산
 bat_matrics <- bat_team
@@ -182,42 +239,3 @@ bat_matrics <- bat_matrics %>%
 
 head(bat_matrics, c("wOBA", "wRAA", "wRC", "wRC_100"), n = 10)
 
-
-# mlb
-library(Lahman)
-team <- Teams
-
-#Make RD #
-# MLB 데이터에서 RD와 W_pct 사이의 관계 시각화
-team_mlb <- team %>% 
-  filter(yearID >= 2002, yearID <= 2022) %>% 
-  mutate(
-    W_pct = W/G,             # W% = (Wins) / (Games)
-    RD = R - RA,              # RD = (Runs Scored) - (Runs Allowed)
-    X1B = H - X2B - X3B - HR
-  )
-
-# Visualization
-ggplot(data = team_mlb, aes(x = RD, y = W_pct)) + 
-  geom_point() +
-  geom_smooth(method = "lm") +                # 직선 추가 (lm: linear model)
-  xlab("Run Differential") +
-  ylab("Win Percentage") +
-  theme_bw()  #강한 양수 그래프가 나옴
-
-# Linear Model #
-# 회귀분석
-rd_model_mlb <- lm(W_pct ~ RD, data = team_mlb)
-
-tidy(rd_model_mlb) %>%                # beta0 = 0.5, beta1 = 0.0006
-  kable(booktabs = T) %>% 
-  kable_styling()
-
-
-# MLB 데이터에서 각 변수들이 득점에 미치는 영향 분석
-lin_weights_mlb <- lm(R ~ BB + HBP + X1B + X2B + X3B + HR + SB + CS,
-                  data = team_mlb)
-
-tidy(lin_weights_mlb) %>% 
-  kable(bookends = T) %>% 
-  kable_styling()
