@@ -50,26 +50,26 @@ $$
 1-1. Load Data (from 2000 to 2019)
 - Pitcher(투수)를 제외한 수비수 데이터
 <div align="center">
-  <img src="DataCompetition1/img/1_1_dataset_fielding.jpg" width="592px" height="146px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/1_1_dataset_fielding.jpg" width="592px" height="146px">
 </div>
 <br>
 
 - Pitcher 데이터
 <div align="center">
-  <img src="DataCompetition1/img/1_2_dataset_pitcher.jpg" width="586px" height="149px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/1_2_dataset_pitcher.jpg" width="586px" height="149px">
 </div>
 <br>
 
 - Lahman Fielding (수비) 데이터  
   Pitcher 데이터에 없는 InnOuts과 Error를 사용하기 위해 POS == pitcher인 행만 가져오기
 <div align="center">
-  <img src="DataCompetition1/img/1_3_dataset_LahmanFielding.jpg" width="584px" height="241px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/1_3_dataset_LahmanFielding.jpg" width="584px" height="241px">
 </div>
 <br>
 
 - Lahman People (선수) 데이터
 <div align="center">
-  <img src="DataCompetition1/img/1_4_dataset_LahmanPlayer.jpg" width="592px" height="149px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/1_4_dataset_LahmanPlayer.jpg" width="592px" height="149px">
 </div>
 <br>
 <br>
@@ -77,19 +77,19 @@ $$
 1-2. 데이터셋 병합  
 - [playerID]을 기준으로 Lahman Fielding에 Lahman Player의 [Name] 칼럼 추가
 <div align="center">
-  <img src="DataCompetition1/img/2_1_join_name.jpg" width="586px" height="151px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/2_1_join_name.jpg" width="586px" height="151px">
 </div>
 <br>
 
 - 필요한 칼럼(Name, InnOuts, E)만 선택
 <div align="center">
-  <img src="DataCompetition1/img/2_2_join_drop.jpg" width="586px" height="151px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/2_2_join_drop.jpg" width="586px" height="151px">
 </div>
 <br>
 
 - [Name]을 기준으로 pitcher와 Lahman_fielding 데이터셋 결합
 <div align="center">
-  <img src="DataCompetition1/img/2_3_join_InnOutsE.jpg" width="586px" height="151px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/2_3_join_InnOutsE.jpg" width="586px" height="151px">
 </div>
 <br>
 <br>
@@ -99,45 +99,45 @@ $$
 ### 2. 포지션별 InnOuts과 Error의 합계 계산
 2-1. InnOuts 칼럼 생성
 <div align="center">
-  <img src="DataCompetition1/img/3_1_InnOuts.jpg" width="590px" height="154px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/3_1_InnOuts.jpg" width="590px" height="154px">
 </div>
 <br>
 
 2-2. 각 포지션별 InnOuts 합계 계산  
 - fielding 데이터셋
 <div align="center">
-  <img src="DataCompetition1/img/3_2_fieldingOuts.jpg" width="585px" height="198px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/3_2_fieldingOuts.jpg" width="585px" height="198px">
 </div>
 <br>
 
 - pitcher 데이터셋
 <div align="center">
-  <img src="DataCompetition1/img/3_3_pitcherOuts.JPG" width="586px" height="78px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/3_3_pitcherOuts.JPG" width="586px" height="78px">
 </div>
 <br>
 
 - fielding + pitcher
 <div align="center">
-  <img src="DataCompetition1/img/3_4_FieldingOuts.JPG" width="582px" height="218px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/3_4_FieldingOuts.JPG" width="582px" height="218px">
 </div>
 <br>
 
 2-3. 각 포지션별 Error 합계 계산
 - fielding 데이터셋
 <div align="center">
-  <img src="DataCompetition1/img/4_1_fieldingErrors.JPG" width="583px" height="196px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/4_1_fieldingErrors.JPG" width="583px" height="196px">
 </div>
 <br>
 
 - pitcher 데이터셋
 <div align="center">
-  <img src="DataCompetition1/img/4_2_pitcherErrors.JPG" width="586px" height="82px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/4_2_pitcherErrors.JPG" width="586px" height="82px">
 </div>
 <br>
 
 - fielding + pitcher
 <div align="center">
-  <img src="DataCompetition1/img/4_3_FieldingErrors.JPG" width="586px" height="221px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/4_3_FieldingErrors.JPG" width="586px" height="221px">
 </div>
 <br>
 <br>
@@ -147,13 +147,13 @@ $$
 ### 3. error/out 비율 계산
 - error/out을 구하고 비율 계산
 <div align="center">
-  <img src="DataCompetition1/img/5_1_rate.JPG" width="586px" height="218px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/5_1_rate.JPG" width="586px" height="218px">
 </div>
 <br>
 
 - 내림차순 정렬
 <div align="center">
-  <img src="DataCompetition1/img/5_2_rank.JPG" width="590px" height="218px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/5_2_rank.JPG" width="590px" height="218px">
 </div>
 <br>
 <br>
@@ -161,7 +161,7 @@ $$
 
 ### 4. 시각화
 <div align="center">
-  <img src="DataCompetition1/img/6_1_visualization.jpg" width="583px" height="360px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/6_1_visualization.jpg" width="583px" height="360px">
 </div>
 
 - 'error/out'값이 높다 == error의 비율이 높다
@@ -175,7 +175,7 @@ $$
 ### 5. OAA (Outs Above Average; 평균 대비 아웃 기여)
 5-1. OAA 칼럼이 있는 fielding 데이터셋 불러오기
 <div align="center">
-  <img src="DataCompetition1/img/7_1_OAA.JPG" width="586px" height="145px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/7_1_OAA.JPG" width="586px" height="145px">
 </div>
 
 catcher(포수)의 OAA는 Null이므로 제외
@@ -184,12 +184,12 @@ catcher(포수)의 OAA는 Null이므로 제외
 
 5-2. 포지션별 OAA의 평균 계산
 <div align="center">
-  <img src="DataCompetition1/img/7_2_OAAmean.JPG" width="588px" height="188px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/7_2_OAAmean.JPG" width="588px" height="188px">
 </div>
 <br>
 
 5-3. 시각화
 <div align="center">
-  <img src="DataCompetition1/img/7_3_visualization.JPG" width="583px" height="360px">
+  <img src="https://github.com/kbr1218/Sports_Analytics/blob/main/DataCompetition1/img/7_3_visualization.JPG" width="583px" height="360px">
 </div>
 <br>
